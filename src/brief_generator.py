@@ -1,9 +1,8 @@
 """
 Turn a scored filing into a one page execution brief.
 
-Cold email gets ignored because it reads like a template. The brief is what we attach when we reach out:
-a single page that says "we already looked at your situation, here's what we
-think the next 90 days execution priorities are."
+Cold emailing gets ignored because it looks generic. The brief is what we attach when we reach out:
+a single page that shows we have done research and we already have an execution plan for them.
 
 """
 
