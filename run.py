@@ -1,9 +1,9 @@
 """
-Run the whole pipeline end-to-end.
+Run the whole pipeline
 
 Two modes:
   --offline   reads sample_data/sample_filings.json (works without network)
-  --live      pulls from SEC EDGAR (needs network; the sandbox you may be in
+  --live      pulls from SEC EDGAR (needs network, the sandbox you may be in
               right now might not have outbound network access)
 
 Usage:
