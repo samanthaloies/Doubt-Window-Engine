@@ -1,12 +1,10 @@
 """
-Turn a scored filing into a one-page execution brief.
+Turn a scored filing into a one page execution brief.
 
-This is the load-bearing component. Cold email gets ignored because it reads
-like a template. The brief is what we attach (or paste) when we reach out:
+Cold email gets ignored because it reads like a template. The brief is what we attach when we reach out:
 a single page that says "we already looked at your situation, here's what we
-think the next-90-days execution priorities are."
+think the next 90 days execution priorities are."
 
-It doesn't ask for a meeting. It shows up with the work already done.
 """
 
 from typing import Dict
@@ -28,7 +26,7 @@ def _primary_contact(filing: Dict):
     related = filing.get("related_persons") or []
     if not related:
         return None
-    # Prefer someone with an exec title
+    # prefer someone w an exec title
     for p in related:
         rels = p.get("relationships") or []
         if any("Executive" in r or "President" in r for r in rels):
@@ -38,33 +36,32 @@ def _primary_contact(filing: Dict):
 
 def _stage_thesis(stage: str) -> Dict[str, str]:
     """
-    What we believe each stage needs. These come from how founders actually
-    spend the first 90 days of a fresh raise. Not a generic checklist;
-    specific positions.
+    What we believe each stage needs. These come from how founders
+    spend the first 90 days of a new raise. 
     """
     if stage == "pre_seed":
         return {
             "headline": "Pre-seed: prove the wedge before headcount grows past 4",
-            "priority_1": "Lock the ICP to one industry-and-stage cell. Most pre-seeds die spending the raise on a TAM they assumed and never sharpened.",
-            "priority_2": "Build a first-pipeline that doesn't depend on the founder's personal network running out. By month 6 the warm list is exhausted; the engine has to be running by then.",
-            "priority_3": "Get the AI-leverage baseline in by hire #5. Pre-seeds that pick up AI tooling early ship 2-3x more by seed.",
-            "load_bearing_gap": "An honest pipeline math sheet that the founder can actually defend to the seed investor in 6-9 months.",
+            "priority_1": "Lock the ICP to one industry and stage cell. Most pre-seeds die spending the raise on a TAM they assumed and never sharpened.",
+            "priority_2": "Build a first pipeline that doesn't depend on the founder's personal network running out. By month 6 the warm list is exhausted so the engine has to be running by then.",
+            "priority_3": "Get the AI use baseline in by hire #5. Pre-seeds that pick up AI early ship 2 to 3x more by seed.",
+            "load_bearing_gap": "An honest pipeline math sheet that the founder can defend to the seed investor in 6-9 months.",
         }
     if stage == "seed":
         return {
-            "headline": "Seed: pick the one acquisition channel that survives the next round",
-            "priority_1": "Identify the one channel where CAC payback is under 12 months. Not three channels. One. The Series A pitch lives or dies on this number.",
-            "priority_2": "Replace founder-led sales with a repeatable motion (or commit to founder-led for 12 more months and staff around it). Half-measures kill seeds.",
+            "headline": "Seed: pick the one acquisition channel that makes it past the next round",
+            "priority_1": "Identify the one channel where CAC payback is under 12 months. The Series A pitch relies on this number.",
+            "priority_2": "Replace founder-led sales with a repeatable motion (or commit to founder-led for 12 more months and staff around it). ",
             "priority_3": "Capital raise architecture: who's on the lead list, what's the data room, what's the milestone for the term sheet conversation? Most seeds wait too long.",
-            "load_bearing_gap": "A defensible CAC/LTV table from real data, not modeled assumptions. Investors at Series A will pressure-test this in week one.",
+            "load_bearing_gap": "A defensible CAC/LTV table from real data. Investors at Series A will pressure test this in the first week.",
         }
     if stage == "series_a":
         return {
             "headline": "Series A: rebuild the GTM machine before Series B diligence starts",
-            "priority_1": "Audit the seed-era growth assumptions. The Series A pitch was 'we found the channel.' The reality usually needs a second channel by month 18.",
-            "priority_2": "Senior GTM hire architecture: VP Sales, Head of Growth, or fractional CRO depends on motion. Wrong call here burns 4-6 months and a year of runway.",
-            "priority_3": "Operational layer: revops, forecasting, board reporting. The Series B investor wants to see numbers they trust, not a founder who 'has it in their head.'",
-            "load_bearing_gap": "A board-ready GTM scorecard with the next-quarter commits the team is willing to sign their name to.",
+            "priority_1": "Audit the seed growth assumptions. The reality of series A is that it usually needs a second channel by month 18.",
+            "priority_2": "Senior GTM hire arch: VP Sales, Head of Growth, or fractional CRO depends on motion. Wrong call here might risk 4-6 months and a year of runway.",
+            "priority_3": "Operational layer: revops, forecasting, reporting to board. The Series B investor wants to see actual numbers and data.",
+            "load_bearing_gap": "A board ready GTM scorecard with the next quarter that the team is willing to sign their name to.",
         }
     return {
         "headline": "Stage unclear from filing",
@@ -127,11 +124,11 @@ def generate_brief(filing: Dict) -> str:
         "",
         "## Why this brief exists",
         "",
-        "Your Form D filing is public the day the SEC receives it. We saw yours, did the homework above before reaching out, and figured the cheapest thing we can do for you is be specific. If any of the above is wrong, that itself is useful information for you to test against. If it's directionally right, we should talk.",
+        "Your Form D filing is public the day the SEC receives it. We saw yours and figured the cheapest thing we can do for you is be specific. If any of the above is wrong, that is useful information for you to test against. If it's right, we should talk.",
         "",
         "## Why we (Zeutara) are reaching out",
         "",
-        "We build the execution architecture that founders running lean don't have time to build themselves. Pipeline, AI automation, GTM, capital raise. We are industry-agnostic but we are highly stage-specific. The above is what we'd want to dig into in a 30-minute call.",
+        "We build the execution architecture that founders running a lean team don't have time to build themselves. This includes things like pipeline, AI automation, GTM, and capital raise. We are industry independent but we are highly stage specific. The above is what we'd want to explore in a 30 minute call.",
         "",
         "---",
         "",
@@ -147,9 +144,9 @@ def generate_brief(filing: Dict) -> str:
 
 def generate_outreach_email(filing: Dict) -> str:
     """
-    Companion to the brief. The email itself is short and references the brief.
-    Timeline-based hook (highest-converting per Belkins 2025: 10% reply rate
-    vs 4.4% for problem-based hooks).
+    The email itself is short and references the brief.
+    Timeline-based hook (highest converting per Belkins 2025: 10% reply rate
+    vs 4.4% for problem based hooks).
     Citation: https://thedigitalbloom.com/learn/cold-outbound-reply-rate-benchmarks/
     """
     z = filing.get("_zeutara", {})
@@ -170,11 +167,11 @@ def generate_outreach_email(filing: Dict) -> str:
     elif "seed" in (z.get("stage") or ""):
         hook = "Seed teams I've worked with typically need to pick their one channel by month 6 of the raise. Most pick it by month 10 and lose 4 months."
     elif "series_a" in (z.get("stage") or ""):
-        hook = "Series A teams have a 6-month window before Series B diligence math starts pulling on the GTM scorecard."
+        hook = "Series A teams have a 6 month window before Series B diligence starts pulling on the GTM scorecard."
     else:
-        hook = "The first 90 days after a raise tend to set the pace for the year."
+        hook = "The first 90 days after a raise tend to set the pace of growth for the year."
 
-    return f"""Subject: 90-day execution view on {issuer_name}
+    return f"""Subject: 90 day execution view on {issuer_name}
 
 {salutation}
 
@@ -182,9 +179,9 @@ Saw the {raised} round close. Congrats.
 
 {hook}
 
-I run a small firm called Zeutara. We do execution architecture for founders at your stage: pipeline, AI automation, GTM, capital raise. Before reaching out I put together a one-page brief on what we'd dig into with you in the first 30 days. It's attached. No ask attached to it; just our read of the situation.
+I run a small firm called Zeutara. We do execution architecture for founders at your stage: pipeline, AI automation, GTM, capital raise. Before reaching out I put together a one page brief on what we'd talk about with you in the first 30 days. 
 
-If any of it lands, happy to spend 30 minutes pressure-testing it with you. If not, the brief is yours either way.
+If any of it lands, I'd be happy to spend 30 minutes testing it with you. If not, the brief is yours either way.
 
 Joseph
 joseph@zeutara.com
