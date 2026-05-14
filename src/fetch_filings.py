@@ -1,11 +1,10 @@
 """
-Pulls recent Form D filings from SEC EDGAR.
+This pulls recent Form D filings from SEC EDGAR.
 
 Form D is filed by companies raising capital under Regulation D. Every
-VC-backed US startup files one within 15 days of their first sale. That makes
-it the cleanest public signal for "this founder just raised."
+VC backed startup in the US files one within 15 days of their first sale.
 
-EDGAR has a free, public JSON feed. No API key required.
+EDGAR has a free, public JSON feed.
 """
 
 import json
@@ -15,15 +14,15 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
 
-# EDGAR requires a User-Agent header that identifies who's making the request.
+# EDGAR requires a User Agent header that identifies who's making the request.
 # See https://www.sec.gov/os/accessing-edgar-data
 HEADERS = {
-    "User-Agent": "Zeutara BD Pipeline contact@zeutara.com",
-    "Accept-Encoding": "gzip, deflate",
+    "User Agent": "Zeutara BD Pipeline contact@zeutara.com",
+    "Accept Encoding": "gzip, deflate",
 }
 
 # The "getcurrent" endpoint streams the latest filings across all companies,
-# filtered by type. Form D is the one we want.
+# filtered by type.
 EDGAR_BROWSE_URL = (
     "https://www.sec.gov/cgi-bin/browse-edgar"
     "?action=getcurrent&type=D&company=&dateb=&owner=include"
@@ -34,7 +33,7 @@ EDGAR_BROWSE_URL = (
 def fetch_recent_form_d(count=40):
     """
     Pull the latest Form D filings from EDGAR's atom feed.
-    Returns a list of dicts with the raw filing metadata.
+    Returns a list of dicts with the filing metadata.
     """
     url = EDGAR_BROWSE_URL.format(count=count)
     req = urllib.request.Request(url, headers=HEADERS)
@@ -68,8 +67,8 @@ def fetch_recent_form_d(count=40):
 
 def fetch_filing_detail(filing_url):
     """
-    Each filing has its own index page. From there we grab the primary doc
-    URL and pull the actual numbers (raise size, industry, etc.).
+    Each filing has its own index page. Then we take the primary doc
+    URL and take the actual numbers (raise size, industry, etc.).
     """
     req = urllib.request.Request(filing_url, headers=HEADERS)
     try:
@@ -102,8 +101,8 @@ def fetch_filing_detail(filing_url):
 
 def parse_form_d_xml(xml_body):
     """
-    Pull the fields we care about from the Form D XML.
-    Form D is a standardized SEC schema, so the fields are predictable.
+    Take the parts we care about from the Form D XML.
+    Form D is a standardized SEC schema, so the fields are pretty much predictable.
     """
     root = ET.fromstring(xml_body)
 
@@ -112,7 +111,7 @@ def parse_form_d_xml(xml_body):
         return tag.split("}", 1)[-1] if "}" in tag else tag
 
     def find_text(parent, path):
-        """Walk a slash-separated path and return text of the final element."""
+        """Walk a slash separated path and return text of the final element."""
         node = parent
         for part in path.split("/"):
             found = None
