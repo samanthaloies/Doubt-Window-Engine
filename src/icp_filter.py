@@ -2,20 +2,20 @@
 Score each filing against the Zeutara ICP.
 
 Zeutara wants founders who are:
-  - raising pre-seed, seed, or Series A (so: total_offering between ~$250k and ~$15m)
+  - raising pre-seed, seed, or Series A (so: total_offering between around $250,000 and $15,000,000)
   - operating companies, not investment funds
-  - US-based (because Zeutara's network is here)
+  - US based since Zeutara's network is here
   - inside a "doubt window" where they have new capital and an execution gap
 
-The output isn't yes/no. It's a 0-100 score with the reasoning attached, so a
-human reviewer can sort the queue and skim the why.
+The output isn't yes or no. It's a 0-100 score with the reasoning attached, so a
+human reviewer can sort the queue and read the why behind it.
 """
 
 from typing import Dict, List, Optional
 
 
 # Industries Zeutara has no edge in and where the founder buying behavior is
-# different (regulated, slow, relationship-locked). Exclude these.
+# different and slower. I would exclude these.
 HARD_EXCLUDE_INDUSTRIES = {
     "Pooled Investment Fund Interests",
     "Hedge Fund",
@@ -29,8 +29,8 @@ HARD_EXCLUDE_INDUSTRIES = {
     "Commercial Banking",
 }
 
-# Industries where founders are most likely to need GTM/AI/capital-raise help
-# and where Zeutara's "execution architecture" pitch lands.
+# Industries where founders are most likely to need GTM/AI/capital raise help
+
 PREFERRED_INDUSTRIES = {
     "Technology",
     "Computers",
@@ -59,7 +59,7 @@ def _parse_amount(amount_str: Optional[str]) -> Optional[float]:
 def stage_from_raise(amount: Optional[float]) -> Optional[str]:
     """
     Map raise size to funding stage. These bands are based on Carta's State of
-    Private Markets Q4 2025 medians: pre-seed ~$1M, seed ~$3M, Series A ~$12M.
+    Private Markets Q4 2025 medians: pre-seed around $1,000,000, seed $3,000,000, Series A $12,000,000.
     Citation: https://valueaddvc.com/blog/startup-funding-rounds-in-2025
     """
     if amount is None:
@@ -77,8 +77,8 @@ def stage_from_raise(amount: Optional[float]) -> Optional[str]:
 
 def score_filing(filing: Dict) -> Dict:
     """
-    Return a dict with score (0-100), stage, reasons (list of strings), and
-    disqualifiers (list of strings). The brief generator uses all of this.
+    Return a dict with score of 0-100, stage, reasons (list of strings), and
+    disqualifiers (list of strings).
     """
     score = 0
     reasons = []
@@ -92,17 +92,17 @@ def score_filing(filing: Dict) -> Dict:
 
     # ---- Hard disqualifiers ----
     if industry in HARD_EXCLUDE_INDUSTRIES:
-        disqualifiers.append(f"Industry '{industry}' is out of scope (investment fund or low-fit sector)")
+        disqualifiers.append(f"Industry '{industry}' is out of scope (investment fund or low fit sector)")
 
     if not total_offering or total_offering < 250_000:
-        disqualifiers.append("Raise too small (under $250k) or unreported")
+        disqualifiers.append("Raise too small (under $250,000,000) or unreported")
 
     if total_offering and total_offering > 25_000_000:
-        disqualifiers.append("Raise too large (>$25M) for Zeutara's stage focus")
+        disqualifiers.append("Raise too large (>$25,000,000) for Zeutara's stage focus")
 
     # Non-US: Zeutara's network is US-centric. Strict for now; could relax later.
     if issuer_state and not _is_us_state(issuer_state):
-        disqualifiers.append(f"Issuer location '{issuer_state}' is outside US")
+        disqualifiers.append(f"Issuer location '{issuer_state}' is outside of the US")
 
     if disqualifiers:
         return {
@@ -116,15 +116,15 @@ def score_filing(filing: Dict) -> Dict:
     stage = stage_from_raise(total_offering)
     if stage in ("pre_seed", "seed", "series_a"):
         score += 40
-        reasons.append(f"Raise of ${total_offering:,.0f} maps to {stage.replace('_', ' ')} (core Zeutara stage)")
+        reasons.append(f"Raise of ${total_offering:,.0f} maps to {stage.replace('_', ' ')} (main Zeutara stage)")
 
     if industry in PREFERRED_INDUSTRIES:
         score += 20
-        reasons.append(f"Industry '{industry}' is one where Zeutara has GTM/AI leverage")
+        reasons.append(f"Industry '{industry}' is one where Zeutara has GTM or AI leverage")
 
     if issuer_state in ("CA", "NY", "MA", "TX", "WA"):
         score += 10
-        reasons.append(f"In a top-5 startup metro state ({issuer_state})")
+        reasons.append(f"In a top 5 startup metro state ({issuer_state})")
 
     # "Doubt window" signal: capital is deployed but offering isn't done yet.
     # When total_sold < total_offering by a meaningful margin, the founder is
@@ -143,10 +143,10 @@ def score_filing(filing: Dict) -> Dict:
             age = current_year - year
             if age <= 3:
                 score += 10
-                reasons.append(f"Incorporated {year} ({age}yr old): green-field execution architecture opportunity")
+                reasons.append(f"Incorporated {year} ({age}yr old): green field execution arch opportunity")
             elif age <= 6:
                 score += 5
-                reasons.append(f"Incorporated {year} ({age}yr old): likely scaling pains")
+                reasons.append(f"Incorporated {year} ({age}yr old): likely scaling pain points")
         except (ValueError, TypeError):
             pass
 
@@ -158,7 +158,7 @@ def score_filing(filing: Dict) -> Dict:
     )
     if has_founder_role:
         score += 5
-        reasons.append("Founder-level decision-maker named in filing (direct contact path)")
+        reasons.append("Founder level decision maker named in filing (direct contact path)")
 
     return {
         "score": min(score, 100),
@@ -169,7 +169,7 @@ def score_filing(filing: Dict) -> Dict:
 
 
 def _is_us_state(state_code: str) -> bool:
-    """Form D uses two-letter codes for US states, longer for countries."""
+    """Form D uses two letter codes for US states, longer for countries."""
     return len(state_code) == 2 and state_code.isalpha()
 
 
