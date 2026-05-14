@@ -71,7 +71,7 @@ prototype/
 └── output/                   # briefs and emails land here
 ```
 
-WHAT IT DOES AND DOES NOT DO
+WHAT IT DOES AND DOES NOT DO:
 
 Does:
 - Takes Form D filings from SEC EDGAR's atom feed
@@ -168,5 +168,3 @@ run takes about a minute (mostly the SEC's rate-limit-friendly delays).
 
 Joseph: if anything in here is wrong or unclear, the README is yours to
 mark up and I'll fix it.
-
-- Sam
